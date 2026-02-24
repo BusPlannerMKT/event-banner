@@ -75,12 +75,12 @@ function updatePreview() {
         ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:70px; max-width:280px; width:auto; height:auto; margin-bottom:20px; object-fit:contain;">`
         : `<div style="height:70px; width:200px; border:2px dashed rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:rgba(255,255,255,0.4); font-size:12px;">Upload logo</div>`;
 
-    // Map pin SVG icon (uses icon color)
+    // Map pin SVG icon
     const pinIcon = `<svg width="14" height="18" viewBox="0 0 14 18" fill="none" style="flex-shrink:0;">
         <path d="M7 0C3.13 0 0 3.13 0 7c0 4.87 6.25 10.5 6.52 10.74a.67.67 0 0 0 .96 0C7.75 17.5 14 11.87 14 7c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="${iconColor}"/>
     </svg>`;
 
-    // Calendar SVG icon (uses icon color)
+    // Calendar SVG icon
     const calendarIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
         <rect x="1" y="2.5" width="14" height="12" rx="2" stroke="${iconColor}" stroke-width="1.5" fill="none"/>
         <line x1="1" y1="6.5" x2="15" y2="6.5" stroke="${iconColor}" stroke-width="1.5"/>
@@ -88,7 +88,7 @@ function updatePreview() {
         <line x1="11" y1="1" x2="11" y2="4" stroke="${iconColor}" stroke-width="1.5" stroke-linecap="round"/>
     </svg>`;
 
-    // Arrow icon for CTA (uses CTA text color)
+    // Arrow icon for CTA
     const arrowIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0; margin-left:6px;">
         <path d="M3 8h10M9 4l4 4-4 4" stroke="${ctaTextColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;

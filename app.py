@@ -6,6 +6,15 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 
+@app.after_request
+def add_no_cache_headers(response):
+    """Prevent browser caching of all responses during development."""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+
 @app.route("/")
 def index():
     return render_template("index.html")

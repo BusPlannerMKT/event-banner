@@ -6,7 +6,7 @@
     <title>Event Banner Builder | BusPlanner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(10000) | random }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v={{ range(100000) | random }}">
 </head>
 <body>
     <nav class="top-nav">
@@ -32,6 +32,6 @@
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="{{ url_for('static', filename='app.js') }}?v={{ range(10000) | random }}"></script>
+    <script src="{{ url_for('static', filename='app.js') }}?v={{ range(100000) | random }}"></script>
 </body>
 </html>
