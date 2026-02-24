@@ -97,17 +97,15 @@ function updatePreview() {
     preview.innerHTML = `
         <div class="banner" style="
             width: 100%;
-            min-height: 450px;
             ${bgStyle}
-            position: relative;
             overflow: hidden;
             font-family: 'Montserrat', Arial, Helvetica, sans-serif;">
             <div style="
-                position: absolute; inset: 0;
                 background: linear-gradient(180deg, rgba(0,39,76,0.55) 0%, rgba(0,0,0,0.70) 100%);
                 display: flex; flex-direction: column;
                 align-items: center; justify-content: center;
-                padding: 40px 50px; text-align: center;">
+                padding: 50px 50px; text-align: center;
+                min-height: 450px;">
 
                 ${logoHtml}
 
