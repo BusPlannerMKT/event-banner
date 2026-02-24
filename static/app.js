@@ -60,6 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('input', updatePreview);
     });
 
+    // Logo size slider
+    const logoSizeSlider = document.getElementById('logo_size');
+    if (logoSizeSlider) {
+        logoSizeSlider.addEventListener('input', () => {
+            document.getElementById('logo_size_value').textContent = logoSizeSlider.value + 'px';
+            updatePreview();
+        });
+    }
+
     // Image upload
     const imageUpload = document.getElementById('image_upload');
     if (imageUpload) imageUpload.addEventListener('change', handleImageUpload);
@@ -100,6 +109,9 @@ function updatePreview() {
     const fsDetails = (document.getElementById('fs_details') || {}).value || '16';
     const fsCta = (document.getElementById('fs_cta') || {}).value || '15';
 
+    // Logo size
+    const logoSize = (document.getElementById('logo_size') || {}).value || '60';
+
     // Colors
     const textColor = getColor('color_text', '#FFFFFF');
     const iconColor = getColor('color_icon', '#FFFFFF');
@@ -125,7 +137,7 @@ function updatePreview() {
         : 'background: #1a1a2e;';
 
     const logoHtml = currentLogoUrl
-        ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:70px; max-width:280px; width:auto; height:auto; margin-bottom:20px; object-fit:contain;">`
+        ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:${logoSize}px; max-width:280px; width:auto; height:auto; margin-bottom:20px; object-fit:contain;">`
         : `<div style="height:70px; width:200px; border:2px dashed rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:rgba(255,255,255,0.4); font-size:12px;">Upload logo</div>`;
 
     // Map pin SVG icon
@@ -235,6 +247,7 @@ function handleLogoUpload(e) {
         document.getElementById('logo-upload-area').style.display = 'none';
         document.getElementById('logo-file-selected').style.display = 'flex';
         document.getElementById('logo-file-name').textContent = file.name;
+        document.getElementById('logo-size-control').style.display = '';
     };
     reader.readAsDataURL(file);
 }
@@ -244,6 +257,7 @@ function clearLogo() {
     document.getElementById('logo_upload').value = '';
     document.getElementById('logo-upload-area').style.display = '';
     document.getElementById('logo-file-selected').style.display = 'none';
+    document.getElementById('logo-size-control').style.display = 'none';
     updatePreview();
 }
 
@@ -400,6 +414,7 @@ function getFormData() {
         fs_subheading: (document.getElementById('fs_subheading') || {}).value || '15',
         fs_details: (document.getElementById('fs_details') || {}).value || '16',
         fs_cta: (document.getElementById('fs_cta') || {}).value || '15',
+        logo_size: (document.getElementById('logo_size') || {}).value || '60',
     };
 }
 

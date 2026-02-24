@@ -133,6 +133,13 @@
             <!-- Logo Image -->
             <div class="form-group">
                 <label>Logo Image</label>
+                <div class="logo-size-control" id="logo-size-control" style="display:none;">
+                    <label for="logo_size">Logo Height</label>
+                    <div class="range-with-value">
+                        <input type="range" id="logo_size" min="30" max="150" value="60" step="5">
+                        <span class="range-value" id="logo_size_value">60px</span>
+                    </div>
+                </div>
                 <div class="file-upload-area" id="logo-upload-area">
                     <input type="file" id="logo_upload" accept="image/jpeg,image/png,image/webp,image/svg+xml">
                     <div class="file-upload-label">

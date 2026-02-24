@@ -41,6 +41,7 @@ def render_banner():
         fs_subheading=data.get("fs_subheading", "15"),
         fs_details=data.get("fs_details", "16"),
         fs_cta=data.get("fs_cta", "15"),
+        logo_size=data.get("logo_size", "60"),
     )
     return jsonify({"html": html})
 

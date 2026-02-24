@@ -184,6 +184,56 @@ body {
     border-bottom: 1px solid var(--gold);
 }
 
+/* Logo Size Slider */
+.logo-size-control {
+    margin-bottom: 0.75rem;
+}
+
+.logo-size-control label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.range-with-value {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.range-with-value input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+}
+
+.range-with-value input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--navy);
+    cursor: pointer;
+    border: 2px solid var(--white);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.range-value {
+    font-size: 0.75rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: var(--text);
+    min-width: 40px;
+    text-align: right;
+}
+
 /* Font Size Controls */
 .font-size-grid {
     display: grid;
