@@ -114,16 +114,19 @@
                     </button>
                 </div>
 
-                <!-- Image search suggestions -->
-                <button class="btn btn-text" id="suggest-btn" onclick="suggestImages()" style="margin-top:0.5rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                    </svg>
-                    Suggest search terms for stock photos
-                </button>
-                <div class="suggestions-box" id="suggestions-box" style="display:none;">
-                    <div class="suggestions-label">Try searching these on Unsplash, Pexels, or Shutterstock:</div>
-                    <div class="suggestions-list" id="suggestions-list"></div>
+                <!-- Stock photo search -->
+                <div class="image-search-bar">
+                    <input type="text" id="image-search-input" placeholder="Search stock photos (e.g. Toronto skyline)" spellcheck="false">
+                    <button class="btn btn-small" id="image-search-btn" onclick="searchImages()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+                <div class="image-grid" id="image-grid" style="display:none;"></div>
+                <div class="image-attribution" id="image-attribution" style="display:none;">
+                    Photos by <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>
                 </div>
             </div>
 

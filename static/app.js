@@ -67,6 +67,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logo upload
     const logoUpload = document.getElementById('logo_upload');
     if (logoUpload) logoUpload.addEventListener('change', handleLogoUpload);
+
+    // Enter key triggers image search
+    const searchInput = document.getElementById('image-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchImages();
+            }
+        });
+    }
 });
 
 // ── Color helpers ──
@@ -206,6 +217,8 @@ function clearBackgroundImage() {
     document.getElementById('image_upload').value = '';
     document.getElementById('bg-upload-area').style.display = '';
     document.getElementById('bg-file-selected').style.display = 'none';
+    // Clear search image selection
+    document.querySelectorAll('.image-grid-item').forEach(item => item.classList.remove('selected'));
     updatePreview();
 }
 
@@ -234,50 +247,73 @@ function clearLogo() {
     updatePreview();
 }
 
-// ── Suggest Image Search Terms ──
-async function suggestImages() {
-    const location = document.getElementById('location').value.trim();
-    if (!location) {
-        showToast('Enter a location first', true);
+// ── Image Search ──
+async function searchImages() {
+    const input = document.getElementById('image-search-input');
+    const query = input.value.trim();
+    if (!query) {
+        showToast('Enter a search term', true);
         return;
     }
 
-    const btn = document.getElementById('suggest-btn');
-    const originalHtml = btn.innerHTML;
+    const btn = document.getElementById('image-search-btn');
+    const grid = document.getElementById('image-grid');
+    const attribution = document.getElementById('image-attribution');
+
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Thinking...';
+    btn.innerHTML = '<span class="spinner"></span>';
+    grid.style.display = 'grid';
+    grid.innerHTML = '<div class="image-grid-loading"><span class="spinner"></span> Searching...</div>';
+    attribution.style.display = 'none';
 
     try {
-        const resp = await fetch('/api/suggest-image', {
+        const resp = await fetch('/api/search-images', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ location }),
+            body: JSON.stringify({ query }),
         });
         const data = await resp.json();
 
         if (data.error) {
-            showToast(data.error, true);
+            grid.innerHTML = `<div class="image-grid-loading">${escapeHtml(data.error)}</div>`;
             return;
         }
 
-        const box = document.getElementById('suggestions-box');
-        const list = document.getElementById('suggestions-list');
-        list.innerHTML = data.suggestions.map(term =>
-            `<span class="suggestion-chip" onclick="copySuggestion(this)" title="Click to copy">${escapeHtml(term)}</span>`
+        if (!data.images || data.images.length === 0) {
+            grid.innerHTML = '<div class="image-grid-loading">No images found. Try a different search.</div>';
+            return;
+        }
+
+        grid.innerHTML = data.images.map(img =>
+            `<div class="image-grid-item" onclick="selectSearchImage('${escapeHtml(img.full)}', this)" title="${escapeHtml(img.alt || img.photographer)}">
+                <img src="${escapeHtml(img.thumb)}" alt="${escapeHtml(img.alt)}" loading="lazy">
+                <span class="photographer">${escapeHtml(img.photographer)}</span>
+            </div>`
         ).join('');
-        box.style.display = '';
+        attribution.style.display = '';
     } catch (err) {
-        showToast('Failed to get suggestions', true);
+        grid.innerHTML = '<div class="image-grid-loading">Failed to search images</div>';
     } finally {
         btn.disabled = false;
-        btn.innerHTML = originalHtml;
+        btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search`;
     }
 }
 
-function copySuggestion(el) {
-    navigator.clipboard.writeText(el.textContent).then(() => {
-        showToast('Copied: ' + el.textContent);
-    });
+function selectSearchImage(url, el) {
+    // Update background image
+    currentImageUrl = url;
+    updatePreview();
+
+    // Show selected state
+    document.querySelectorAll('.image-grid-item').forEach(item => item.classList.remove('selected'));
+    el.classList.add('selected');
+
+    // Update file display
+    document.getElementById('bg-upload-area').style.display = 'none';
+    document.getElementById('bg-file-selected').style.display = 'flex';
+    document.getElementById('bg-file-name').textContent = 'Stock photo from Pexels';
+
+    showToast('Background image applied!');
 }
 
 // ── Copy Mailchimp HTML ──

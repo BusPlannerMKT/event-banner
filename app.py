@@ -1,4 +1,5 @@
-import anthropic
+import requests as http_requests
+
 from flask import Flask, jsonify, render_template, request
 from config import Config
 
@@ -44,56 +45,45 @@ def render_banner():
     return jsonify({"html": html})
 
 
-@app.route("/api/suggest-image", methods=["POST"])
-def suggest_image():
+@app.route("/api/search-images", methods=["POST"])
+def search_images():
     data = request.get_json()
-    location = data.get("location", "").strip()
-    if not location:
-        return jsonify({"suggestions": []})
+    query = data.get("query", "").strip()
+    if not query:
+        return jsonify({"error": "Enter a search term"}), 400
 
-    api_key = Config.ANTHROPIC_API_KEY
-    if not api_key:
-        return jsonify({"error": "ANTHROPIC_API_KEY not configured"}), 500
+    pexels_key = Config.PEXELS_API_KEY
+    if not pexels_key:
+        return jsonify({"error": "PEXELS_API_KEY not configured. Get a free key at pexels.com/api"}), 500
 
     try:
-        client = anthropic.Anthropic(api_key=api_key)
-        message = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=300,
-            messages=[
-                {
-                    "role": "user",
-                    "content": (
-                        f"I need to find a stock photo for an email banner about a conference/trade show "
-                        f"at this location: {location}. "
-                        f"Give me 5 specific search terms I can use on stock photo sites like Unsplash, "
-                        f"Pexels, or Shutterstock to find a great background image. "
-                        f"Focus on the city skyline, landmarks, or venue. "
-                        f"Return ONLY a JSON array of strings, nothing else. "
-                        f'Example: ["Toronto skyline sunset", "CN Tower cityscape"]'
-                    ),
-                }
-            ],
+        resp = http_requests.get(
+            "https://api.pexels.com/v1/search",
+            headers={"Authorization": pexels_key},
+            params={
+                "query": query,
+                "per_page": 12,
+                "orientation": "landscape",
+            },
+            timeout=10,
         )
+        resp.raise_for_status()
+        results = resp.json()
 
-        import json
+        images = []
+        for photo in results.get("photos", []):
+            images.append({
+                "id": photo["id"],
+                "thumb": photo["src"]["medium"],
+                "full": photo["src"]["landscape"],
+                "photographer": photo["photographer"],
+                "alt": photo.get("alt", ""),
+            })
 
-        try:
-            suggestions = json.loads(message.content[0].text)
-        except (json.JSONDecodeError, IndexError):
-            suggestions = [f"{location} skyline", f"{location} cityscape", f"{location} landmark"]
-
-        return jsonify({"suggestions": suggestions})
+        return jsonify({"images": images})
     except Exception as e:
-        print(f"Anthropic API error: {e}")
-        # Fallback suggestions if API fails
-        return jsonify({"suggestions": [
-            f"{location} skyline",
-            f"{location} cityscape",
-            f"{location} landmark",
-            f"{location} aerial view",
-            f"{location} downtown",
-        ]})
+        print(f"Pexels API error: {e}")
+        return jsonify({"error": "Failed to search images. Check your PEXELS_API_KEY."}), 500
 
 
 if __name__ == "__main__":
