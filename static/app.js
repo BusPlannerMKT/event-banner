@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('input', updatePreview);
     });
 
+    // Attach live-preview listeners to color pickers
+    const colorFields = ['color_text', 'color_icon', 'color_cta_bg', 'color_cta_text'];
+    colorFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => {
+                // Update hex display
+                const hexEl = document.getElementById(id + '_hex');
+                if (hexEl) hexEl.textContent = el.value.toUpperCase();
+                updatePreview();
+            });
+        }
+    });
+
     // Image upload
     const imageUpload = document.getElementById('image_upload');
     if (imageUpload) imageUpload.addEventListener('change', handleImageUpload);
@@ -20,12 +34,24 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoUpload) logoUpload.addEventListener('change', handleLogoUpload);
 });
 
+// ── Color helpers ──
+function getColor(id, fallback) {
+    const el = document.getElementById(id);
+    return el ? el.value : fallback;
+}
+
 // ── Live Preview ──
 function updatePreview() {
     const eventName = document.getElementById('event_name').value.trim();
     const location = document.getElementById('location').value.trim();
     const dates = document.getElementById('dates').value.trim();
     const ctaText = document.getElementById('cta_text').value.trim();
+
+    // Colors
+    const textColor = getColor('color_text', '#FFFFFF');
+    const iconColor = getColor('color_icon', '#FFFFFF');
+    const ctaBg = getColor('color_cta_bg', '#FCBA30');
+    const ctaTextColor = getColor('color_cta_text', '#00274C');
 
     // If nothing is filled in, show empty state
     if (!eventName && !location && !dates && !ctaText && !currentImageUrl && !currentLogoUrl) {
@@ -49,15 +75,28 @@ function updatePreview() {
         ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:70px; max-width:280px; width:auto; height:auto; margin-bottom:20px; object-fit:contain;">`
         : `<div style="height:70px; width:200px; border:2px dashed rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:rgba(255,255,255,0.4); font-size:12px;">Upload logo</div>`;
 
-    // Map pin SVG icon
+    // Map pin SVG icon (uses icon color)
     const pinIcon = `<svg width="14" height="18" viewBox="0 0 14 18" fill="none" style="flex-shrink:0;">
-        <path d="M7 0C3.13 0 0 3.13 0 7c0 4.87 6.25 10.5 6.52 10.74a.67.67 0 0 0 .96 0C7.75 17.5 14 11.87 14 7c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="white"/>
+        <path d="M7 0C3.13 0 0 3.13 0 7c0 4.87 6.25 10.5 6.52 10.74a.67.67 0 0 0 .96 0C7.75 17.5 14 11.87 14 7c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="${iconColor}"/>
+    </svg>`;
+
+    // Calendar SVG icon (uses icon color)
+    const calendarIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;">
+        <rect x="1" y="2.5" width="14" height="12" rx="2" stroke="${iconColor}" stroke-width="1.5" fill="none"/>
+        <line x1="1" y1="6.5" x2="15" y2="6.5" stroke="${iconColor}" stroke-width="1.5"/>
+        <line x1="5" y1="1" x2="5" y2="4" stroke="${iconColor}" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="11" y1="1" x2="11" y2="4" stroke="${iconColor}" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>`;
+
+    // Arrow icon for CTA (uses CTA text color)
+    const arrowIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0; margin-left:6px;">
+        <path d="M3 8h10M9 4l4 4-4 4" stroke="${ctaTextColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>`;
 
     const preview = document.getElementById('banner-preview');
     preview.innerHTML = `
         <div class="banner" style="
-            width: 600px;
+            width: 100%;
             min-height: 450px;
             ${bgStyle}
             position: relative;
@@ -72,25 +111,27 @@ function updatePreview() {
 
                 ${logoHtml}
 
-                <div style="font-size:28px; font-weight:800; color:#FFFFFF; line-height:1.2; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.02em;">
+                <div style="font-size:28px; font-weight:800; color:${textColor}; line-height:1.2; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.02em;">
                     ${escapeHtml(eventName) || '<span style="opacity:0.4;">Event Name</span>'}
                 </div>
 
                 ${location ? `
-                <div style="display:flex; align-items:center; gap:6px; color:#FFFFFF; font-size:16px; font-weight:500;">
+                <div style="display:flex; align-items:center; gap:6px; color:${textColor}; font-size:16px; font-weight:500;">
                     ${pinIcon}
                     ${escapeHtml(location)}
                 </div>` : ''}
 
                 ${dates ? `
-                <div style="font-size:16px; font-weight:500; color:#FFFFFF; margin-top:8px;">
+                <div style="display:flex; align-items:center; gap:6px; font-size:16px; font-weight:500; color:${textColor}; margin-top:8px;">
+                    ${calendarIcon}
                     ${escapeHtml(dates)}
                 </div>` : ''}
 
                 ${ctaText ? `
                 <div style="margin-top:28px;">
-                    <div style="display:inline-block; background:#FCBA30; color:#00274C; padding:12px 32px; border-radius:25px; font-size:15px; font-weight:700;">
+                    <div style="display:inline-flex; align-items:center; background:${ctaBg}; color:${ctaTextColor}; padding:12px 32px; border-radius:25px; font-size:15px; font-weight:700;">
                         ${escapeHtml(ctaText)}
+                        ${arrowIcon}
                     </div>
                 </div>` : ''}
             </div>
@@ -242,7 +283,7 @@ async function downloadPNG() {
 
     try {
         const canvas = await html2canvas(banner, {
-            width: 600,
+            width: banner.offsetWidth,
             height: banner.offsetHeight,
             scale: 2,
             useCORS: true,
@@ -269,6 +310,10 @@ function getFormData() {
         cta_text: document.getElementById('cta_text').value.trim(),
         image_url: currentImageUrl,
         logo_url: currentLogoUrl,
+        color_text: getColor('color_text', '#FFFFFF'),
+        color_icon: getColor('color_icon', '#FFFFFF'),
+        color_cta_bg: getColor('color_cta_bg', '#FCBA30'),
+        color_cta_text: getColor('color_cta_text', '#00274C'),
     };
 }
 

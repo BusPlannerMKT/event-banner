@@ -22,6 +22,10 @@ def render_banner():
         cta_text=data.get("cta_text", ""),
         image_url=data.get("image_url", ""),
         logo_url=data.get("logo_url", ""),
+        color_text=data.get("color_text", "#FFFFFF"),
+        color_icon=data.get("color_icon", "#FFFFFF"),
+        color_cta_bg=data.get("color_cta_bg", "#FCBA30"),
+        color_cta_text=data.get("color_cta_text", "#00274C"),
     )
     return jsonify({"html": html})
 
