@@ -1,6 +1,7 @@
 // ── State ──
 let currentImageUrl = '';
 let currentLogoUrl = '';
+let currentPartnerLogoUrl = '';
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -69,6 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Partner logo size slider
+    const partnerLogoSizeSlider = document.getElementById('partner_logo_size');
+    if (partnerLogoSizeSlider) {
+        partnerLogoSizeSlider.addEventListener('input', () => {
+            document.getElementById('partner_logo_size_value').textContent = partnerLogoSizeSlider.value + 'px';
+            updatePreview();
+        });
+    }
+
     // Image upload
     const imageUpload = document.getElementById('image_upload');
     if (imageUpload) imageUpload.addEventListener('change', handleImageUpload);
@@ -76,6 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Logo upload
     const logoUpload = document.getElementById('logo_upload');
     if (logoUpload) logoUpload.addEventListener('change', handleLogoUpload);
+
+    // Partner logo upload
+    const partnerLogoUpload = document.getElementById('partner_logo_upload');
+    if (partnerLogoUpload) partnerLogoUpload.addEventListener('change', handlePartnerLogoUpload);
 
     // Enter key triggers image search
     const searchInput = document.getElementById('image-search-input');
@@ -109,8 +123,9 @@ function updatePreview() {
     const fsDetails = (document.getElementById('fs_details') || {}).value || '16';
     const fsCta = (document.getElementById('fs_cta') || {}).value || '15';
 
-    // Logo size
+    // Logo sizes
     const logoSize = (document.getElementById('logo_size') || {}).value || '60';
+    const partnerLogoSize = (document.getElementById('partner_logo_size') || {}).value || '60';
 
     // Colors
     const textColor = getColor('color_text', '#FFFFFF');
@@ -119,7 +134,7 @@ function updatePreview() {
     const ctaTextColor = getColor('color_cta_text', '#00274C');
 
     // If nothing is filled in, show empty state
-    if (!eventName && !location && !dates && !ctaText && !currentImageUrl && !currentLogoUrl) {
+    if (!eventName && !location && !dates && !ctaText && !currentImageUrl && !currentLogoUrl && !currentPartnerLogoUrl) {
         document.getElementById('banner-preview').innerHTML = `
             <div class="banner-empty-state">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -136,9 +151,25 @@ function updatePreview() {
         ? `background-image: url('${escapeHtml(currentImageUrl)}'); background-size: cover; background-position: center;`
         : 'background: #1a1a2e;';
 
-    const logoHtml = currentLogoUrl
-        ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:${logoSize}px; max-width:280px; width:auto; height:auto; margin-bottom:20px; object-fit:contain;">`
-        : `<div style="height:70px; width:200px; border:2px dashed rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:rgba(255,255,255,0.4); font-size:12px;">Upload logo</div>`;
+    // Build logo section (supports dual logos side-by-side)
+    let logoHtml;
+    const mainLogoImg = currentLogoUrl
+        ? `<img src="${escapeHtml(currentLogoUrl)}" alt="Logo" style="max-height:${logoSize}px; max-width:280px; width:auto; height:auto; object-fit:contain;">`
+        : '';
+    const partnerLogoImg = currentPartnerLogoUrl
+        ? `<img src="${escapeHtml(currentPartnerLogoUrl)}" alt="Partner Logo" style="max-height:${partnerLogoSize}px; max-width:280px; width:auto; height:auto; object-fit:contain;">`
+        : '';
+
+    if (mainLogoImg && partnerLogoImg) {
+        // Both logos: side-by-side
+        logoHtml = `<div style="display:flex; align-items:center; justify-content:center; gap:24px; margin-bottom:20px;">${mainLogoImg}${partnerLogoImg}</div>`;
+    } else if (mainLogoImg) {
+        logoHtml = `<div style="margin-bottom:20px;">${mainLogoImg}</div>`;
+    } else if (partnerLogoImg) {
+        logoHtml = `<div style="margin-bottom:20px;">${partnerLogoImg}</div>`;
+    } else {
+        logoHtml = `<div style="height:70px; width:200px; border:2px dashed rgba(255,255,255,0.3); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:rgba(255,255,255,0.4); font-size:12px;">Upload logo</div>`;
+    }
 
     // Map pin SVG icon
     const pinIcon = `<svg width="14" height="18" viewBox="0 0 14 18" fill="none" style="flex-shrink:0;">
@@ -261,6 +292,33 @@ function clearLogo() {
     updatePreview();
 }
 
+// ── Partner Logo Upload ──
+function handlePartnerLogoUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        currentPartnerLogoUrl = ev.target.result;
+        updatePreview();
+
+        document.getElementById('partner-logo-upload-area').style.display = 'none';
+        document.getElementById('partner-logo-file-selected').style.display = 'flex';
+        document.getElementById('partner-logo-file-name').textContent = file.name;
+        document.getElementById('partner-logo-size-control').style.display = '';
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearPartnerLogo() {
+    currentPartnerLogoUrl = '';
+    document.getElementById('partner_logo_upload').value = '';
+    document.getElementById('partner-logo-upload-area').style.display = '';
+    document.getElementById('partner-logo-file-selected').style.display = 'none';
+    document.getElementById('partner-logo-size-control').style.display = 'none';
+    updatePreview();
+}
+
 // ── Image Search ──
 async function searchImages() {
     const input = document.getElementById('image-search-input');
@@ -342,6 +400,9 @@ async function copyMailchimpHTML() {
     if (data.logo_url && data.logo_url.startsWith('data:')) {
         warnings.push('logo');
     }
+    if (data.partner_logo_url && data.partner_logo_url.startsWith('data:')) {
+        warnings.push('partner logo');
+    }
     if (warnings.length > 0) {
         const proceed = confirm(
             `Your ${warnings.join(' and ')} ${warnings.length > 1 ? 'are' : 'is'} uploaded locally. ` +
@@ -406,6 +467,7 @@ function getFormData() {
         cta_text: document.getElementById('cta_text').value.trim(),
         image_url: currentImageUrl,
         logo_url: currentLogoUrl,
+        partner_logo_url: currentPartnerLogoUrl,
         color_text: getColor('color_text', '#FFFFFF'),
         color_icon: getColor('color_icon', '#FFFFFF'),
         color_cta_bg: getColor('color_cta_bg', '#FCBA30'),
@@ -415,6 +477,7 @@ function getFormData() {
         fs_details: (document.getElementById('fs_details') || {}).value || '16',
         fs_cta: (document.getElementById('fs_cta') || {}).value || '15',
         logo_size: (document.getElementById('logo_size') || {}).value || '60',
+        partner_logo_size: (document.getElementById('partner_logo_size') || {}).value || '60',
     };
 }
 

@@ -33,6 +33,7 @@ def render_banner():
         cta_text=data.get("cta_text", ""),
         image_url=data.get("image_url", ""),
         logo_url=data.get("logo_url", ""),
+        partner_logo_url=data.get("partner_logo_url", ""),
         color_text=data.get("color_text", "#FFFFFF"),
         color_icon=data.get("color_icon", "#FFFFFF"),
         color_cta_bg=data.get("color_cta_bg", "#FCBA30"),
@@ -42,6 +43,7 @@ def render_banner():
         fs_details=data.get("fs_details", "16"),
         fs_cta=data.get("fs_cta", "15"),
         logo_size=data.get("logo_size", "60"),
+        partner_logo_size=data.get("partner_logo_size", "60"),
     )
     return jsonify({"html": html})
 

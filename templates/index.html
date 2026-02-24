@@ -158,6 +158,34 @@
                 </div>
             </div>
 
+            <!-- Partner Logo Image -->
+            <div class="form-group">
+                <label>Partner Logo (optional)</label>
+                <div class="logo-size-control" id="partner-logo-size-control" style="display:none;">
+                    <label for="partner_logo_size">Partner Logo Height</label>
+                    <div class="range-with-value">
+                        <input type="range" id="partner_logo_size" min="30" max="150" value="60" step="5">
+                        <span class="range-value" id="partner_logo_size_value">60px</span>
+                    </div>
+                </div>
+                <div class="file-upload-area" id="partner-logo-upload-area">
+                    <input type="file" id="partner_logo_upload" accept="image/jpeg,image/png,image/webp,image/svg+xml">
+                    <div class="file-upload-label">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        <span>Upload partner logo (e.g., STN)</span>
+                        <span class="file-upload-hint">Appears to the right of the main logo</span>
+                    </div>
+                </div>
+                <div class="file-selected" id="partner-logo-file-selected" style="display:none;">
+                    <span class="file-name" id="partner-logo-file-name"></span>
+                    <button class="btn-icon" onclick="clearPartnerLogo()" title="Remove">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
             <!-- Export Actions -->
             <div class="export-actions">
                 <button class="btn btn-primary" onclick="copyMailchimpHTML()">

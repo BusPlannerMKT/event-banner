@@ -23,8 +23,26 @@
                        padding:40px 50px 45px 50px;
                        text-align:center;">
 
-              <!-- Logo -->
-              {% if logo_url %}
+              <!-- Logo(s) -->
+              {% if logo_url and partner_logo_url %}
+              <!-- Both logos: side-by-side -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+                     style="margin:0 auto 24px auto;">
+                <tr>
+                  <td style="text-align:center; padding-right:12px; vertical-align:middle;">
+                    <img src="{{ logo_url }}" alt="BusPlanner"
+                         height="{{ logo_size }}"
+                         style="display:block; height:{{ logo_size }}px; width:auto; max-width:260px;">
+                  </td>
+                  <td style="text-align:center; padding-left:12px; vertical-align:middle;">
+                    <img src="{{ partner_logo_url }}" alt="Partner"
+                         height="{{ partner_logo_size }}"
+                         style="display:block; height:{{ partner_logo_size }}px; width:auto; max-width:260px;">
+                  </td>
+                </tr>
+              </table>
+              {% elif logo_url %}
+              <!-- Main logo only -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0"
                      style="margin:0 auto 24px auto;">
                 <tr>
@@ -32,6 +50,18 @@
                     <img src="{{ logo_url }}" alt="BusPlanner"
                          height="{{ logo_size }}"
                          style="display:block; margin:0 auto; height:{{ logo_size }}px; width:auto; max-width:260px;">
+                  </td>
+                </tr>
+              </table>
+              {% elif partner_logo_url %}
+              <!-- Partner logo only -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+                     style="margin:0 auto 24px auto;">
+                <tr>
+                  <td style="text-align:center;">
+                    <img src="{{ partner_logo_url }}" alt="Partner"
+                         height="{{ partner_logo_size }}"
+                         style="display:block; margin:0 auto; height:{{ partner_logo_size }}px; width:auto; max-width:260px;">
                   </td>
                 </tr>
               </table>
