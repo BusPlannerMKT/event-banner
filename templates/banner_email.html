@@ -42,18 +42,37 @@
                      width="100%" style="border-collapse:collapse;">
                 <tr>
                   <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:28px;
+                             font-size:{{ fs_title }}px;
                              font-weight:800;
                              line-height:1.2;
                              color:{{ color_text }};
                              text-align:center;
                              text-transform:uppercase;
                              letter-spacing:0.02em;
-                             padding-bottom:20px;">
+                             padding-bottom:{% if subheading %}8px{% else %}20px{% endif %};">
                     {{ event_name }}
                   </td>
                 </tr>
               </table>
+
+              {% if subheading %}
+              <!-- Subheading -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+                     width="100%" style="border-collapse:collapse;">
+                <tr>
+                  <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
+                             font-size:{{ fs_subheading }}px;
+                             font-weight:400;
+                             line-height:1.4;
+                             color:{{ color_text }};
+                             opacity:0.85;
+                             text-align:center;
+                             padding-bottom:20px;">
+                    {{ subheading }}
+                  </td>
+                </tr>
+              </table>
+              {% endif %}
 
               {% if location %}
               <!-- Location with pin icon -->
@@ -66,7 +85,7 @@
                          style="display:block; width:16px; height:20px;">
                   </td>
                   <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:16px;
+                             font-size:{{ fs_details }}px;
                              font-weight:500;
                              color:{{ color_text }};
                              vertical-align:middle;">
@@ -87,7 +106,7 @@
                          style="display:block; width:16px; height:16px;">
                   </td>
                   <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:16px;
+                             font-size:{{ fs_details }}px;
                              font-weight:500;
                              color:{{ color_text }};
                              vertical-align:middle;
@@ -112,13 +131,13 @@
                              border-radius:25px;
                              padding:12px 32px;
                              font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:15px;
+                             font-size:{{ fs_cta }}px;
                              font-weight:700;
                              color:{{ color_cta_text }};
                              text-align:center;
                              mso-padding-alt:14px 36px;">
                     <!--[if mso]>
-                    <a href="#" style="color:{{ color_cta_text }}; text-decoration:none; font-family:Arial, sans-serif; font-size:15px; font-weight:bold;">
+                    <a href="#" style="color:{{ color_cta_text }}; text-decoration:none; font-family:Arial, sans-serif; font-size:{{ fs_cta }}px; font-weight:bold;">
                     <![endif]-->
                     {{ cta_text }} &rarr;
                     <!--[if mso]>

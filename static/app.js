@@ -5,24 +5,59 @@ let currentLogoUrl = '';
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
     // Attach live-preview listeners to all text inputs
-    const fields = ['event_name', 'location', 'dates', 'cta_text'];
+    const fields = ['event_name', 'subheading', 'location', 'dates', 'cta_text'];
     fields.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', updatePreview);
     });
 
-    // Attach live-preview listeners to color pickers
+    // Attach live-preview listeners to color pickers and hex inputs
     const colorFields = ['color_text', 'color_icon', 'color_cta_bg', 'color_cta_text'];
     colorFields.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.addEventListener('input', () => {
-                // Update hex display
-                const hexEl = document.getElementById(id + '_hex');
-                if (hexEl) hexEl.textContent = el.value.toUpperCase();
+        const picker = document.getElementById(id);
+        const hexInput = document.getElementById(id + '_hex');
+
+        if (picker) {
+            // Color picker → update hex input + preview
+            picker.addEventListener('input', () => {
+                if (hexInput) hexInput.value = picker.value.toUpperCase();
                 updatePreview();
             });
         }
+
+        if (hexInput) {
+            // Hex input → update color picker + preview
+            hexInput.addEventListener('input', () => {
+                let val = hexInput.value.trim();
+                // Add # if missing
+                if (val && !val.startsWith('#')) val = '#' + val;
+                // Validate hex color
+                if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                    if (picker) picker.value = val;
+                    updatePreview();
+                }
+            });
+            // On blur, normalize the value
+            hexInput.addEventListener('blur', () => {
+                let val = hexInput.value.trim();
+                if (val && !val.startsWith('#')) val = '#' + val;
+                if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                    hexInput.value = val.toUpperCase();
+                    if (picker) picker.value = val;
+                    updatePreview();
+                } else if (picker) {
+                    // Reset to picker value if invalid
+                    hexInput.value = picker.value.toUpperCase();
+                }
+            });
+        }
+    });
+
+    // Attach live-preview listeners to font size inputs
+    const fontSizeFields = ['fs_title', 'fs_subheading', 'fs_details', 'fs_cta'];
+    fontSizeFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePreview);
     });
 
     // Image upload
@@ -43,9 +78,16 @@ function getColor(id, fallback) {
 // ── Live Preview ──
 function updatePreview() {
     const eventName = document.getElementById('event_name').value.trim();
+    const subheading = document.getElementById('subheading').value.trim();
     const location = document.getElementById('location').value.trim();
     const dates = document.getElementById('dates').value.trim();
     const ctaText = document.getElementById('cta_text').value.trim();
+
+    // Font sizes
+    const fsTitle = (document.getElementById('fs_title') || {}).value || '28';
+    const fsSubheading = (document.getElementById('fs_subheading') || {}).value || '15';
+    const fsDetails = (document.getElementById('fs_details') || {}).value || '16';
+    const fsCta = (document.getElementById('fs_cta') || {}).value || '15';
 
     // Colors
     const textColor = getColor('color_text', '#FFFFFF');
@@ -109,25 +151,30 @@ function updatePreview() {
 
                 ${logoHtml}
 
-                <div style="font-size:28px; font-weight:800; color:${textColor}; line-height:1.2; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.02em;">
+                <div style="font-size:${fsTitle}px; font-weight:800; color:${textColor}; line-height:1.2; margin-bottom:${subheading ? '8px' : '20px'}; text-transform:uppercase; letter-spacing:0.02em;">
                     ${escapeHtml(eventName) || '<span style="opacity:0.4;">Event Name</span>'}
                 </div>
 
+                ${subheading ? `
+                <div style="font-size:${fsSubheading}px; font-weight:400; color:${textColor}; opacity:0.85; margin-bottom:20px; line-height:1.4;">
+                    ${escapeHtml(subheading)}
+                </div>` : ''}
+
                 ${location ? `
-                <div style="display:flex; align-items:center; gap:6px; color:${textColor}; font-size:16px; font-weight:500;">
+                <div style="display:flex; align-items:center; gap:6px; color:${textColor}; font-size:${fsDetails}px; font-weight:500;">
                     ${pinIcon}
                     ${escapeHtml(location)}
                 </div>` : ''}
 
                 ${dates ? `
-                <div style="display:flex; align-items:center; gap:6px; font-size:16px; font-weight:500; color:${textColor}; margin-top:8px;">
+                <div style="display:flex; align-items:center; gap:6px; font-size:${fsDetails}px; font-weight:500; color:${textColor}; margin-top:8px;">
                     ${calendarIcon}
                     ${escapeHtml(dates)}
                 </div>` : ''}
 
                 ${ctaText ? `
                 <div style="margin-top:28px;">
-                    <div style="display:inline-flex; align-items:center; background:${ctaBg}; color:${ctaTextColor}; padding:12px 32px; border-radius:25px; font-size:15px; font-weight:700;">
+                    <div style="display:inline-flex; align-items:center; background:${ctaBg}; color:${ctaTextColor}; padding:12px 32px; border-radius:25px; font-size:${fsCta}px; font-weight:700;">
                         ${escapeHtml(ctaText)}
                         ${arrowIcon}
                     </div>
@@ -303,6 +350,7 @@ async function downloadPNG() {
 function getFormData() {
     return {
         event_name: document.getElementById('event_name').value.trim(),
+        subheading: document.getElementById('subheading').value.trim(),
         location: document.getElementById('location').value.trim(),
         dates: document.getElementById('dates').value.trim(),
         cta_text: document.getElementById('cta_text').value.trim(),
@@ -312,6 +360,10 @@ function getFormData() {
         color_icon: getColor('color_icon', '#FFFFFF'),
         color_cta_bg: getColor('color_cta_bg', '#FCBA30'),
         color_cta_text: getColor('color_cta_text', '#00274C'),
+        fs_title: (document.getElementById('fs_title') || {}).value || '28',
+        fs_subheading: (document.getElementById('fs_subheading') || {}).value || '15',
+        fs_details: (document.getElementById('fs_details') || {}).value || '16',
+        fs_cta: (document.getElementById('fs_cta') || {}).value || '15',
     };
 }
 

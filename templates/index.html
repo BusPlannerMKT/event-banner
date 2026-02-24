@@ -15,6 +15,11 @@
             </div>
 
             <div class="form-group">
+                <label for="subheading">Subheading <span style="font-weight:400; color:#999; font-size:0.75rem;">(optional)</span></label>
+                <input type="text" id="subheading" placeholder="Join us at Canada's largest transit conference">
+            </div>
+
+            <div class="form-group">
                 <label for="location">Location</label>
                 <input type="text" id="location" placeholder="Metro Toronto Convention Centre">
             </div>
@@ -37,29 +42,52 @@
                         <label for="color_text">Text</label>
                         <div class="color-input-wrap">
                             <input type="color" id="color_text" value="#FFFFFF">
-                            <span class="color-hex" id="color_text_hex">#FFFFFF</span>
+                            <input type="text" class="color-hex-input" id="color_text_hex" value="#FFFFFF" maxlength="7" spellcheck="false">
                         </div>
                     </div>
                     <div class="color-field">
                         <label for="color_icon">Icons</label>
                         <div class="color-input-wrap">
                             <input type="color" id="color_icon" value="#FFFFFF">
-                            <span class="color-hex" id="color_icon_hex">#FFFFFF</span>
+                            <input type="text" class="color-hex-input" id="color_icon_hex" value="#FFFFFF" maxlength="7" spellcheck="false">
                         </div>
                     </div>
                     <div class="color-field">
                         <label for="color_cta_bg">CTA Background</label>
                         <div class="color-input-wrap">
                             <input type="color" id="color_cta_bg" value="#FCBA30">
-                            <span class="color-hex" id="color_cta_bg_hex">#FCBA30</span>
+                            <input type="text" class="color-hex-input" id="color_cta_bg_hex" value="#FCBA30" maxlength="7" spellcheck="false">
                         </div>
                     </div>
                     <div class="color-field">
                         <label for="color_cta_text">CTA Text</label>
                         <div class="color-input-wrap">
                             <input type="color" id="color_cta_text" value="#00274C">
-                            <span class="color-hex" id="color_cta_text_hex">#00274C</span>
+                            <input type="text" class="color-hex-input" id="color_cta_text_hex" value="#00274C" maxlength="7" spellcheck="false">
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Font Size Controls -->
+            <div class="form-group">
+                <label>Font Sizes <span style="font-weight:400; color:#999; font-size:0.75rem;">(px)</span></label>
+                <div class="font-size-grid">
+                    <div class="font-size-field">
+                        <label for="fs_title">Title</label>
+                        <input type="number" id="fs_title" value="28" min="14" max="60" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_subheading">Subheading</label>
+                        <input type="number" id="fs_subheading" value="15" min="10" max="30" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_details">Location/Date</label>
+                        <input type="number" id="fs_details" value="16" min="10" max="30" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_cta">CTA Button</label>
+                        <input type="number" id="fs_cta" value="15" min="10" max="30" step="1">
                     </div>
                 </div>
             </div>

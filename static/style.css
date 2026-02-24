@@ -167,11 +167,53 @@ body {
     border-radius: 3px;
 }
 
-.color-hex {
+.color-hex-input {
     font-size: 0.75rem;
     font-family: 'Courier New', monospace;
     color: var(--text);
     font-weight: 500;
+    border: none;
+    background: transparent;
+    width: 65px;
+    padding: 2px 0;
+    outline: none;
+    text-transform: uppercase;
+}
+
+.color-hex-input:focus {
+    border-bottom: 1px solid var(--gold);
+}
+
+/* Font Size Controls */
+.font-size-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.font-size-field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-light);
+    margin-bottom: 0.25rem;
+}
+
+.font-size-field input[type="number"] {
+    width: 100%;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.font-size-field input[type="number"]:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(252,186,48,0.15);
 }
 
 /* File Upload */

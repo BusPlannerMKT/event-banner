@@ -26,6 +26,7 @@ def render_banner():
     html = render_template(
         "banner_email.html",
         event_name=data.get("event_name", ""),
+        subheading=data.get("subheading", ""),
         location=data.get("location", ""),
         dates=data.get("dates", ""),
         cta_text=data.get("cta_text", ""),
@@ -35,6 +36,10 @@ def render_banner():
         color_icon=data.get("color_icon", "#FFFFFF"),
         color_cta_bg=data.get("color_cta_bg", "#FCBA30"),
         color_cta_text=data.get("color_cta_text", "#00274C"),
+        fs_title=data.get("fs_title", "28"),
+        fs_subheading=data.get("fs_subheading", "15"),
+        fs_details=data.get("fs_details", "16"),
+        fs_cta=data.get("fs_cta", "15"),
     )
     return jsonify({"html": html})
 
@@ -50,34 +55,45 @@ def suggest_image():
     if not api_key:
         return jsonify({"error": "ANTHROPIC_API_KEY not configured"}), 500
 
-    client = anthropic.Anthropic(api_key=api_key)
-    message = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=300,
-        messages=[
-            {
-                "role": "user",
-                "content": (
-                    f"I need to find a stock photo for an email banner about a conference/trade show "
-                    f"at this location: {location}. "
-                    f"Give me 5 specific search terms I can use on stock photo sites like Unsplash, "
-                    f"Pexels, or Shutterstock to find a great background image. "
-                    f"Focus on the city skyline, landmarks, or venue. "
-                    f"Return ONLY a JSON array of strings, nothing else. "
-                    f'Example: ["Toronto skyline sunset", "CN Tower cityscape"]'
-                ),
-            }
-        ],
-    )
-
-    import json
-
     try:
-        suggestions = json.loads(message.content[0].text)
-    except (json.JSONDecodeError, IndexError):
-        suggestions = [f"{location} skyline", f"{location} cityscape", f"{location} landmark"]
+        client = anthropic.Anthropic(api_key=api_key)
+        message = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=300,
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        f"I need to find a stock photo for an email banner about a conference/trade show "
+                        f"at this location: {location}. "
+                        f"Give me 5 specific search terms I can use on stock photo sites like Unsplash, "
+                        f"Pexels, or Shutterstock to find a great background image. "
+                        f"Focus on the city skyline, landmarks, or venue. "
+                        f"Return ONLY a JSON array of strings, nothing else. "
+                        f'Example: ["Toronto skyline sunset", "CN Tower cityscape"]'
+                    ),
+                }
+            ],
+        )
 
-    return jsonify({"suggestions": suggestions})
+        import json
+
+        try:
+            suggestions = json.loads(message.content[0].text)
+        except (json.JSONDecodeError, IndexError):
+            suggestions = [f"{location} skyline", f"{location} cityscape", f"{location} landmark"]
+
+        return jsonify({"suggestions": suggestions})
+    except Exception as e:
+        print(f"Anthropic API error: {e}")
+        # Fallback suggestions if API fails
+        return jsonify({"suggestions": [
+            f"{location} skyline",
+            f"{location} cityscape",
+            f"{location} landmark",
+            f"{location} aerial view",
+            f"{location} downtown",
+        ]})
 
 
 if __name__ == "__main__":
