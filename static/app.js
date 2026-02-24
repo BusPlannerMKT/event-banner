@@ -101,6 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Export format/quality listeners
+    const exportFormat = document.getElementById('export_format');
+    if (exportFormat) exportFormat.addEventListener('change', updateExportUI);
+
+    const exportQuality = document.getElementById('export_quality');
+    if (exportQuality) exportQuality.addEventListener('change', updateExportUI);
 });
 
 // ── Color helpers ──
@@ -388,72 +395,66 @@ function selectSearchImage(url, el) {
     showToast('Background image applied!');
 }
 
-// ── Copy Mailchimp HTML ──
-async function copyMailchimpHTML() {
-    const data = getFormData();
+// ── Export Quality Presets ──
+const QUALITY_PRESETS = {
+    standard: { scale: 2, jpegQuality: 0.85, label: 'Standard \u2014 2x resolution, good for web/email' },
+    high:     { scale: 3, jpegQuality: 0.92, label: 'High \u2014 3x resolution, sharp for most uses' },
+    ultra:    { scale: 4, jpegQuality: 0.97, label: 'Ultra \u2014 4x resolution, maximum quality' },
+};
 
-    // Warn about local images
-    const warnings = [];
-    if (data.image_url && data.image_url.startsWith('data:')) {
-        warnings.push('background image');
-    }
-    if (data.logo_url && data.logo_url.startsWith('data:')) {
-        warnings.push('logo');
-    }
-    if (data.partner_logo_url && data.partner_logo_url.startsWith('data:')) {
-        warnings.push('partner logo');
-    }
-    if (warnings.length > 0) {
-        const proceed = confirm(
-            `Your ${warnings.join(' and ')} ${warnings.length > 1 ? 'are' : 'is'} uploaded locally. ` +
-            `For Mailchimp, you need publicly hosted image URLs.\n\n` +
-            `Upload your images to Mailchimp Content Studio first, then replace the URLs in the HTML.\n\n` +
-            `Copy the HTML anyway?`
-        );
-        if (!proceed) return;
-    }
+// ── Update Export UI ──
+function updateExportUI() {
+    const format = document.getElementById('export_format').value;
+    const quality = document.getElementById('export_quality').value;
+    const preset = QUALITY_PRESETS[quality];
 
-    try {
-        const resp = await fetch('/api/render', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-        });
-        const result = await resp.json();
-        await navigator.clipboard.writeText(result.html);
-        showToast('Mailchimp HTML copied to clipboard!');
-    } catch (err) {
-        showToast('Failed to copy HTML', true);
-    }
+    // Update button label
+    const label = document.getElementById('download-btn-label');
+    if (label) label.textContent = 'Download ' + format.toUpperCase();
+
+    // Update hint text
+    const hint = document.getElementById('export-quality-hint');
+    if (hint) hint.textContent = preset.label;
 }
 
-// ── Download PNG ──
-async function downloadPNG() {
+// ── Download Banner ──
+async function downloadBanner() {
     const banner = document.querySelector('#banner-preview .banner');
     if (!banner) {
         showToast('Fill in the banner details first', true);
         return;
     }
 
-    showToast('Generating PNG...');
+    const format = document.getElementById('export_format').value;
+    const quality = document.getElementById('export_quality').value;
+    const preset = QUALITY_PRESETS[quality];
+
+    showToast('Generating ' + format.toUpperCase() + '...');
 
     try {
         const canvas = await html2canvas(banner, {
             width: banner.offsetWidth,
             height: banner.offsetHeight,
-            scale: 2,
+            scale: preset.scale,
             useCORS: true,
             allowTaint: false,
             backgroundColor: '#000000',
         });
 
         const link = document.createElement('a');
-        link.download = 'busplanner-event-banner.png';
-        link.href = canvas.toDataURL('image/png');
+
+        if (format === 'jpeg') {
+            link.download = 'busplanner-event-banner.jpg';
+            link.href = canvas.toDataURL('image/jpeg', preset.jpegQuality);
+        } else {
+            link.download = 'busplanner-event-banner.png';
+            link.href = canvas.toDataURL('image/png');
+        }
+
         link.click();
-        showToast('PNG downloaded!');
+        showToast(format.toUpperCase() + ' downloaded!');
     } catch (err) {
-        showToast('Failed to generate PNG', true);
+        showToast('Failed to generate image', true);
     }
 }
 

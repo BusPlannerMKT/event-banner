@@ -107,6 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Export format/quality listeners
+    const exportFormat = document.getElementById('export_format');
+    if (exportFormat) exportFormat.addEventListener('change', updateExportUI);
+
+    const exportQuality = document.getElementById('export_quality');
+    if (exportQuality) exportQuality.addEventListener('change', updateExportUI);
 });
 
 // ── Color helpers ──
@@ -397,292 +404,66 @@ function selectSearchImage(url, el) {
     showToast('Background image applied!');
 }
 
-// ── Render Email HTML (Client-Side — replaces server-side Nunjucks) ──
-function renderEmailHTML(data) {
-    const d = data;
-    const iconColorHex = (d.color_icon || '#FFFFFF').replace('#', '');
+// ── Export Quality Presets ──
+const QUALITY_PRESETS = {
+    standard: { scale: 2, jpegQuality: 0.85, label: 'Standard \u2014 2x resolution, good for web/email' },
+    high:     { scale: 3, jpegQuality: 0.92, label: 'High \u2014 3x resolution, sharp for most uses' },
+    ultra:    { scale: 4, jpegQuality: 0.97, label: 'Ultra \u2014 4x resolution, maximum quality' },
+};
 
-    // Build logo section
-    let logoSection = '';
-    if (d.logo_url && d.partner_logo_url) {
-        // Both logos: side-by-side
-        logoSection = `
-              <!-- Both logos: side-by-side -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto 24px auto;">
-                <tr>
-                  <td style="text-align:center; padding-right:12px; vertical-align:middle;">
-                    <img src="${d.logo_url}" alt="BusPlanner"
-                         height="${d.logo_size}"
-                         style="display:block; height:${d.logo_size}px; width:auto; max-width:260px;">
-                  </td>
-                  <td style="text-align:center; padding-left:12px; vertical-align:middle;">
-                    <img src="${d.partner_logo_url}" alt="Partner"
-                         height="${d.partner_logo_size}"
-                         style="display:block; height:${d.partner_logo_size}px; width:auto; max-width:260px;">
-                  </td>
-                </tr>
-              </table>`;
-    } else if (d.logo_url) {
-        // Main logo only
-        logoSection = `
-              <!-- Main logo only -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto 24px auto;">
-                <tr>
-                  <td style="text-align:center;">
-                    <img src="${d.logo_url}" alt="BusPlanner"
-                         height="${d.logo_size}"
-                         style="display:block; margin:0 auto; height:${d.logo_size}px; width:auto; max-width:260px;">
-                  </td>
-                </tr>
-              </table>`;
-    } else if (d.partner_logo_url) {
-        // Partner logo only
-        logoSection = `
-              <!-- Partner logo only -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto 24px auto;">
-                <tr>
-                  <td style="text-align:center;">
-                    <img src="${d.partner_logo_url}" alt="Partner"
-                         height="${d.partner_logo_size}"
-                         style="display:block; margin:0 auto; height:${d.partner_logo_size}px; width:auto; max-width:260px;">
-                  </td>
-                </tr>
-              </table>`;
-    }
+// ── Update Export UI ──
+function updateExportUI() {
+    const format = document.getElementById('export_format').value;
+    const quality = document.getElementById('export_quality').value;
+    const preset = QUALITY_PRESETS[quality];
 
-    // Subheading section
-    let subheadingSection = '';
-    if (d.subheading) {
-        subheadingSection = `
-              <!-- Subheading -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     width="100%" style="border-collapse:collapse;">
-                <tr>
-                  <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:${d.fs_subheading}px;
-                             font-weight:400;
-                             line-height:1.4;
-                             color:${d.color_text};
-                             opacity:0.85;
-                             text-align:center;
-                             padding-bottom:20px;">
-                    ${d.subheading}
-                  </td>
-                </tr>
-              </table>`;
-    }
+    // Update button label
+    const label = document.getElementById('download-btn-label');
+    if (label) label.textContent = 'Download ' + format.toUpperCase();
 
-    // Location section
-    let locationSection = '';
-    if (d.location) {
-        locationSection = `
-              <!-- Location with pin icon -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto; border-collapse:collapse;">
-                <tr>
-                  <td style="padding-right:6px; vertical-align:middle;">
-                    <img src="https://img.icons8.com/ios-filled/20/${iconColorHex}/marker.png"
-                         alt="" width="16" height="20"
-                         style="display:block; width:16px; height:20px;">
-                  </td>
-                  <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:${d.fs_details}px;
-                             font-weight:500;
-                             color:${d.color_text};
-                             vertical-align:middle;">
-                    ${d.location}
-                  </td>
-                </tr>
-              </table>`;
-    }
-
-    // Dates section
-    let datesSection = '';
-    if (d.dates) {
-        datesSection = `
-              <!-- Dates with calendar icon -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:8px auto 0 auto; border-collapse:collapse;">
-                <tr>
-                  <td style="padding-right:6px; vertical-align:middle;">
-                    <img src="https://img.icons8.com/ios-filled/20/${iconColorHex}/calendar--v1.png"
-                         alt="" width="16" height="16"
-                         style="display:block; width:16px; height:16px;">
-                  </td>
-                  <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:${d.fs_details}px;
-                             font-weight:500;
-                             color:${d.color_text};
-                             vertical-align:middle;
-                             padding-bottom:0;">
-                    ${d.dates}
-                  </td>
-                </tr>
-              </table>
-              <!-- Spacer -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     width="100%" style="border-collapse:collapse;">
-                <tr><td style="height:28px; font-size:0; line-height:0;">&nbsp;</td></tr>
-              </table>`;
-    }
-
-    // CTA section
-    let ctaSection = '';
-    if (d.cta_text) {
-        ctaSection = `
-              <!-- CTA Button with arrow -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     style="margin:0 auto; border-collapse:collapse;">
-                <tr>
-                  <td style="background-color:${d.color_cta_bg};
-                             border-radius:25px;
-                             padding:12px 32px;
-                             font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:${d.fs_cta}px;
-                             font-weight:700;
-                             color:${d.color_cta_text};
-                             text-align:center;
-                             mso-padding-alt:14px 36px;">
-                    <!--[if mso]>
-                    <a href="#" style="color:${d.color_cta_text}; text-decoration:none; font-family:Arial, sans-serif; font-size:${d.fs_cta}px; font-weight:bold;">
-                    <![endif]-->
-                    ${d.cta_text} &rarr;
-                    <!--[if mso]>
-                    </a>
-                    <![endif]-->
-                  </td>
-                </tr>
-              </table>`;
-    }
-
-    // Assemble full email HTML
-    return `<!-- BusPlanner Event Banner — Email-Compatible HTML -->
-<!-- Paste this into Mailchimp's code editor -->
-<table role="presentation" cellpadding="0" cellspacing="0" border="0"
-       width="100%" style="border-collapse:collapse; margin:0 auto;">
-  <tr>
-    <td style="padding:0;">
-      <!--[if mso]>
-      <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false"
-              style="width:100%;height:450px;">
-        <v:fill type="frame" src="${d.image_url}" />
-        <v:textbox inset="0,0,0,0">
-      <![endif]-->
-      <div style="background-image:url('${d.image_url}');
-                  background-size:cover;
-                  background-position:center;
-                  width:100%;
-                  max-width:100%;">
-        <!-- Dark gradient overlay -->
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-               width="100%" style="border-collapse:collapse;">
-          <tr>
-            <td style="background:linear-gradient(180deg, rgba(0,39,76,0.55) 0%, rgba(0,0,0,0.70) 100%);
-                       padding:40px 50px 45px 50px;
-                       text-align:center;">
-
-${logoSection}
-
-              <!-- Event Name -->
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0"
-                     width="100%" style="border-collapse:collapse;">
-                <tr>
-                  <td style="font-family:'Montserrat', Arial, Helvetica, sans-serif;
-                             font-size:${d.fs_title}px;
-                             font-weight:800;
-                             line-height:1.2;
-                             color:${d.color_text};
-                             text-align:center;
-                             text-transform:uppercase;
-                             letter-spacing:0.02em;
-                             padding-bottom:${d.subheading ? '8' : '20'}px;">
-                    ${d.event_name}
-                  </td>
-                </tr>
-              </table>
-
-${subheadingSection}
-${locationSection}
-${datesSection}
-${ctaSection}
-
-            </td>
-          </tr>
-        </table>
-      </div>
-      <!--[if mso]>
-        </v:textbox>
-      </v:rect>
-      <![endif]-->
-    </td>
-  </tr>
-</table>`;
+    // Update hint text
+    const hint = document.getElementById('export-quality-hint');
+    if (hint) hint.textContent = preset.label;
 }
 
-// ── Copy Mailchimp HTML (Client-Side Rendering) ──
-async function copyMailchimpHTML() {
-    const data = getFormData();
-
-    // Warn about local images
-    const warnings = [];
-    if (data.image_url && data.image_url.startsWith('data:')) {
-        warnings.push('background image');
-    }
-    if (data.logo_url && data.logo_url.startsWith('data:')) {
-        warnings.push('logo');
-    }
-    if (data.partner_logo_url && data.partner_logo_url.startsWith('data:')) {
-        warnings.push('partner logo');
-    }
-    if (warnings.length > 0) {
-        const proceed = confirm(
-            `Your ${warnings.join(' and ')} ${warnings.length > 1 ? 'are' : 'is'} uploaded locally. ` +
-            `For Mailchimp, you need publicly hosted image URLs.\n\n` +
-            `Upload your images to Mailchimp Content Studio first, then replace the URLs in the HTML.\n\n` +
-            `Copy the HTML anyway?`
-        );
-        if (!proceed) return;
-    }
-
-    try {
-        const html = renderEmailHTML(data);
-        await navigator.clipboard.writeText(html);
-        showToast('Mailchimp HTML copied to clipboard!');
-    } catch (err) {
-        showToast('Failed to copy HTML', true);
-    }
-}
-
-// ── Download PNG ──
-async function downloadPNG() {
+// ── Download Banner ──
+async function downloadBanner() {
     const banner = document.querySelector('#banner-preview .banner');
     if (!banner) {
         showToast('Fill in the banner details first', true);
         return;
     }
 
-    showToast('Generating PNG...');
+    const format = document.getElementById('export_format').value;
+    const quality = document.getElementById('export_quality').value;
+    const preset = QUALITY_PRESETS[quality];
+
+    showToast('Generating ' + format.toUpperCase() + '...');
 
     try {
         const canvas = await html2canvas(banner, {
             width: banner.offsetWidth,
             height: banner.offsetHeight,
-            scale: 2,
+            scale: preset.scale,
             useCORS: true,
             allowTaint: false,
             backgroundColor: '#000000',
         });
 
         const link = document.createElement('a');
-        link.download = 'busplanner-event-banner.png';
-        link.href = canvas.toDataURL('image/png');
+
+        if (format === 'jpeg') {
+            link.download = 'busplanner-event-banner.jpg';
+            link.href = canvas.toDataURL('image/jpeg', preset.jpegQuality);
+        } else {
+            link.download = 'busplanner-event-banner.png';
+            link.href = canvas.toDataURL('image/png');
+        }
+
         link.click();
-        showToast('PNG downloaded!');
+        showToast(format.toUpperCase() + ' downloaded!');
     } catch (err) {
-        showToast('Failed to generate PNG', true);
+        showToast('Failed to generate image', true);
     }
 }
 

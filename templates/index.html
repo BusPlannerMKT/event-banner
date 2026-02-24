@@ -186,19 +186,40 @@
                 </div>
             </div>
 
+            <!-- Export Settings -->
+            <div class="export-settings">
+                <label>Export Settings</label>
+                <div class="export-options">
+                    <div class="export-row">
+                        <div class="export-field">
+                            <label for="export_format">Format</label>
+                            <select id="export_format">
+                                <option value="png" selected>PNG (lossless)</option>
+                                <option value="jpeg">JPEG (smaller file)</option>
+                            </select>
+                        </div>
+                        <div class="export-field">
+                            <label for="export_quality">Quality</label>
+                            <select id="export_quality">
+                                <option value="standard">Standard</option>
+                                <option value="high" selected>High</option>
+                                <option value="ultra">Ultra</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="export-quality-hint" id="export-quality-hint">
+                        High &mdash; 3x resolution, sharp for most uses
+                    </div>
+                </div>
+            </div>
+
             <!-- Export Actions -->
             <div class="export-actions">
-                <button class="btn btn-primary" onclick="copyMailchimpHTML()">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                    </svg>
-                    Copy Mailchimp HTML
-                </button>
-                <button class="btn btn-secondary" onclick="downloadPNG()">
+                <button class="btn btn-primary" onclick="downloadBanner()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
                     </svg>
-                    Download PNG
+                    <span id="download-btn-label">Download PNG</span>
                 </button>
             </div>
         </div>
