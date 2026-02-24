@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Banner Builder | BusPlanner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="nav-brand">
+            <span class="brand-name">BusPlanner</span>
+            <span class="brand-divider">|</span>
+            <span class="brand-tool">Event Banner Builder</span>
+        </div>
+    </nav>
+
+    <main class="container">
+<div class="page-header">
+    <h1>Create Event Banner</h1>
+    <p>Design an email-ready banner for BusPlanner event campaigns.</p>
+</div>
+
+<div class="builder-layout">
+    <!-- LEFT: Form -->
+    <div class="builder-form">
+        <div class="form-card">
+            <div class="form-group">
+                <label for="event_name">Event Name</label>
+                <input type="text" id="event_name" placeholder="OPTA Conference & Trade Show">
+            </div>
+
+            <div class="form-group">
+                <label for="subheading">Subheading <span style="font-weight:400; color:#999; font-size:0.75rem;">(optional)</span></label>
+                <input type="text" id="subheading" placeholder="Join us at Canada's largest transit conference">
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="Metro Toronto Convention Centre">
+            </div>
+
+            <div class="form-group">
+                <label for="dates">Event Dates</label>
+                <input type="text" id="dates" placeholder="April 2-4, 2025">
+            </div>
+
+            <div class="form-group">
+                <label for="cta_text">CTA Button Text</label>
+                <input type="text" id="cta_text" placeholder="Visit us at Booth 415">
+            </div>
+
+            <!-- Color Controls -->
+            <div class="form-group">
+                <label>Colors</label>
+                <div class="color-grid">
+                    <div class="color-field">
+                        <label for="color_text">Text</label>
+                        <div class="color-input-wrap">
+                            <input type="color" id="color_text" value="#FFFFFF">
+                            <input type="text" class="color-hex-input" id="color_text_hex" value="#FFFFFF" maxlength="7" spellcheck="false">
+                        </div>
+                    </div>
+                    <div class="color-field">
+                        <label for="color_icon">Icons</label>
+                        <div class="color-input-wrap">
+                            <input type="color" id="color_icon" value="#FFFFFF">
+                            <input type="text" class="color-hex-input" id="color_icon_hex" value="#FFFFFF" maxlength="7" spellcheck="false">
+                        </div>
+                    </div>
+                    <div class="color-field">
+                        <label for="color_cta_bg">CTA Background</label>
+                        <div class="color-input-wrap">
+                            <input type="color" id="color_cta_bg" value="#FCBA30">
+                            <input type="text" class="color-hex-input" id="color_cta_bg_hex" value="#FCBA30" maxlength="7" spellcheck="false">
+                        </div>
+                    </div>
+                    <div class="color-field">
+                        <label for="color_cta_text">CTA Text</label>
+                        <div class="color-input-wrap">
+                            <input type="color" id="color_cta_text" value="#00274C">
+                            <input type="text" class="color-hex-input" id="color_cta_text_hex" value="#00274C" maxlength="7" spellcheck="false">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Font Size Controls -->
+            <div class="form-group">
+                <label>Font Sizes <span style="font-weight:400; color:#999; font-size:0.75rem;">(px)</span></label>
+                <div class="font-size-grid">
+                    <div class="font-size-field">
+                        <label for="fs_title">Title</label>
+                        <input type="number" id="fs_title" value="28" min="14" max="60" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_subheading">Subheading</label>
+                        <input type="number" id="fs_subheading" value="15" min="10" max="30" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_details">Location/Date</label>
+                        <input type="number" id="fs_details" value="16" min="10" max="30" step="1">
+                    </div>
+                    <div class="font-size-field">
+                        <label for="fs_cta">CTA Button</label>
+                        <input type="number" id="fs_cta" value="15" min="10" max="30" step="1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Background Image -->
+            <div class="form-group">
+                <label>Background Image</label>
+                <div class="file-upload-area" id="bg-upload-area">
+                    <input type="file" id="image_upload" accept="image/jpeg,image/png,image/webp">
+                    <div class="file-upload-label">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <span>Click to upload or drag &amp; drop</span>
+                        <span class="file-upload-hint">JPG, PNG, or WebP</span>
+                    </div>
+                </div>
+                <div class="file-selected" id="bg-file-selected" style="display:none;">
+                    <span class="file-name" id="bg-file-name"></span>
+                    <button class="btn-icon" onclick="clearBackgroundImage()" title="Remove">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <!-- Stock photo search -->
+                <div class="image-search-bar">
+                    <input type="text" id="image-search-input" placeholder="Search stock photos (e.g. Toronto skyline)" spellcheck="false">
+                    <button class="btn btn-small" id="image-search-btn" onclick="searchImages()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        Search
+                    </button>
+                </div>
+                <div class="image-grid" id="image-grid" style="display:none;"></div>
+                <div class="image-attribution" id="image-attribution" style="display:none;">
+                    Photos by <a href="https://www.pexels.com" target="_blank" rel="noopener">Pexels</a>
+                </div>
+            </div>
+
+            <!-- Logo Image -->
+            <div class="form-group">
+                <label>Logo Image</label>
+                <div class="logo-size-control" id="logo-size-control" style="display:none;">
+                    <label for="logo_size">Logo Height</label>
+                    <div class="range-with-value">
+                        <input type="range" id="logo_size" min="30" max="150" value="60" step="5">
+                        <span class="range-value" id="logo_size_value">60px</span>
+                    </div>
+                </div>
+                <div class="file-upload-area" id="logo-upload-area">
+                    <input type="file" id="logo_upload" accept="image/jpeg,image/png,image/webp,image/svg+xml">
+                    <div class="file-upload-label">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        <span>Upload your logo</span>
+                        <span class="file-upload-hint">PNG with transparency recommended</span>
+                    </div>
+                </div>
+                <div class="file-selected" id="logo-file-selected" style="display:none;">
+                    <span class="file-name" id="logo-file-name"></span>
+                    <button class="btn-icon" onclick="clearLogo()" title="Remove">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Partner Logo Image -->
+            <div class="form-group">
+                <label>Partner Logo (optional)</label>
+                <div class="logo-size-control" id="partner-logo-size-control" style="display:none;">
+                    <label for="partner_logo_size">Partner Logo Height</label>
+                    <div class="range-with-value">
+                        <input type="range" id="partner_logo_size" min="30" max="150" value="60" step="5">
+                        <span class="range-value" id="partner_logo_size_value">60px</span>
+                    </div>
+                </div>
+                <div class="file-upload-area" id="partner-logo-upload-area">
+                    <input type="file" id="partner_logo_upload" accept="image/jpeg,image/png,image/webp,image/svg+xml">
+                    <div class="file-upload-label">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                        <span>Upload partner logo (e.g., STN)</span>
+                        <span class="file-upload-hint">Appears to the right of the main logo</span>
+                    </div>
+                </div>
+                <div class="file-selected" id="partner-logo-file-selected" style="display:none;">
+                    <span class="file-name" id="partner-logo-file-name"></span>
+                    <button class="btn-icon" onclick="clearPartnerLogo()" title="Remove">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Export Actions -->
+            <div class="export-actions">
+                <button class="btn btn-primary" onclick="copyMailchimpHTML()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    Copy Mailchimp HTML
+                </button>
+                <button class="btn btn-secondary" onclick="downloadPNG()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download PNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Live Preview -->
+    <div class="builder-preview">
+        <div class="preview-label">Preview</div>
+        <div id="banner-preview" class="banner-container">
+            <div class="banner-empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <p>Fill in the fields to see your banner</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
