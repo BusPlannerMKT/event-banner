@@ -197,10 +197,8 @@ function updatePreview() {
         <line x1="11" y1="1" x2="11" y2="4" stroke="${iconColor}" stroke-width="1.5" stroke-linecap="round"/>
     </svg>`;
 
-    // Arrow icon for CTA
-    const arrowIcon = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0; margin-left:6px;">
-        <path d="M3 8h10M9 4l4 4-4 4" stroke="${ctaTextColor}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>`;
+    // Arrow icon for CTA (Unicode instead of SVG for html2canvas compatibility)
+    const arrowIcon = `<span style="margin-left:6px; font-size:inherit;">&#8594;</span>`;
 
     const preview = document.getElementById('banner-preview');
     preview.innerHTML = `
