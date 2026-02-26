@@ -197,9 +197,6 @@ function updatePreview() {
         <line x1="11" y1="1" x2="11" y2="4" stroke="${iconColor}" stroke-width="1.5" stroke-linecap="round"/>
     </svg>`;
 
-    // Arrow icon for CTA (Unicode instead of SVG for html2canvas compatibility)
-    const arrowIcon = `<span style="margin-left:6px; font-size:inherit;">&#8594;</span>`;
-
     const preview = document.getElementById('banner-preview');
     preview.innerHTML = `
         <div class="banner" style="
@@ -240,8 +237,7 @@ function updatePreview() {
                 ${ctaText ? `
                 <div style="margin-top:28px;">
                     <div style="display:inline-flex; align-items:center; background:${ctaBg}; color:${ctaTextColor}; padding:12px 32px; border-radius:25px; font-size:${fsCta}px; font-weight:700;">
-                        ${escapeHtml(ctaText)}
-                        ${arrowIcon}
+                        ${escapeHtml(ctaText)} \u2192
                     </div>
                 </div>` : ''}
             </div>
