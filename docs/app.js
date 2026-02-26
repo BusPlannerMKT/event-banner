@@ -237,7 +237,8 @@ function updatePreview() {
                 ${ctaText ? `
                 <div style="margin-top:28px;">
                     <div style="display:inline-flex; align-items:center; background:${ctaBg}; color:${ctaTextColor}; padding:12px 32px; border-radius:25px; font-size:${fsCta}px; font-weight:700;">
-                        ${escapeHtml(ctaText)} \u2192
+                        ${escapeHtml(ctaText)}
+                        <img src="https://img.icons8.com/ios-filled/20/${ctaTextColor.replace('#','')}/long-arrow-right.png" alt="" width="16" height="16" style="display:inline-block; margin-left:8px; vertical-align:middle;">
                     </div>
                 </div>` : ''}
             </div>
